@@ -1,0 +1,40 @@
+{
+  "name": "make-npx-card",
+  "version": "1.0.0",
+  "description": "Interactive generator for npx business cards — mint your own `npx <you>` card in under a minute",
+  "type": "module",
+  "bin": {
+    "make-npx-card": "./cli.mjs"
+  },
+  "files": [
+    "cli.mjs",
+    "src"
+  ],
+  "scripts": {
+    "start": "node cli.mjs",
+    "test": "node --test test/*.test.mjs",
+    "pub": "npm version patch && npm publish"
+  },
+  "keywords": [
+    "npx",
+    "npx-card",
+    "business-card",
+    "card",
+    "cli",
+    "generator",
+    "scaffold",
+    "terminal"
+  ],
+  "author": "shwetank",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.11.0",
+    "boxen": "^8.0.1",
+    "chalk": "^5.4.1",
+    "figlet": "^1.11.0",
+    "qrcode-terminal": "^0.12.0"
+  }
+}
