@@ -73,7 +73,7 @@ Paste this into your profile README (the repo named \`${gh}\`):
 </p>
 <p align="center">
   <a href="https://www.npmjs.com/package/${answers.handle}">
-    <img src="https://img.shields.io/badge/📇_run-npx_${answers.handle.replace(/[-_]/g, (m) => (m === "-" ? "--" : "__"))}-blue" alt="npx ${answers.handle}">
+    <img src="https://img.shields.io/badge/run-npx_${answers.handle.replace(/[-_]/g, (m) => (m === "-" ? "--" : "__"))}-blue" alt="npx ${answers.handle}">
   </a>
 </p>
 \`\`\`

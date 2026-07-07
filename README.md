@@ -6,64 +6,84 @@
 npx make-npx-card
 ```
 
-Impatient? Zero prompts, straight from your GitHub profile:
+In a hurry? Zero prompts, straight from your GitHub profile:
 
 ```bash
 npx make-npx-card --from-github <you> --yes
 ```
 
-<!-- demo.gif goes here — record with `vhs` or asciinema -->
+<!-- demo.gif goes here — record with `vhs demo.tape` -->
 ![demo](./demo.gif)
 
-## What it does
+## The pitch
 
-An interactive wizard that scaffolds a complete, **immediately publishable**
-npx business card — the kind where someone types `npx your-npm-name` and gets
-a slick card in their terminal with your name in big gradient ASCII, your
-links, live GitHub stats, and a QR code they can scan off the screen.
+Paper business cards end up in pockets, and pockets end up in washing
+machines. Terminal commands end up in muscle memory. This tool scaffolds a
+complete, immediately publishable npm package that prints your name, links,
+and an interactive menu whenever anyone, anywhere, runs `npx your-name`.
 
-### The wizard & CLI
+You answer a few questions. It handles the rendering, the package.json
+ceremony, the publish pipeline, and an amount of terminal eye candy that is
+difficult to justify but easy to enjoy.
 
-- 🐙 **GitHub import** — type your username, it prefills name, bio, blog, twitter, email from your profile
-- 🎨 **10 themes** — Cyberpunk, Synthwave '84, Matrix, Dracula, Catppuccin Mocha, Gruvbox, Tokyo Night, Nord, Rosé Pine, Hacker Green (+ custom hex) — browse them with `npx make-npx-card themes`, and **cycle themes live on the preview** before shipping
-- 🔎 **Live npm registry check** so you don't pick a taken package name
-- 👀 **Real preview** of your actual card with an edit loop before anything is written
-- ⚡ **`--yes` quick mode** — CI-safe, zero prompts, GitHub profile in → publishable card out
-- 👥 **Team mode** — `--from-github alice,bob,carol --yes` mints a card per person in one command
-- 🌱 **git init + first commit** — offered in the wizard, automatic in quick mode
-- 🧾 **`--dry-run`** — see exactly what would be written, write nothing
-- 🩺 **`doctor`** — health-checks any card dir: config, bin wiring, deps, template version, publish status, and whether your local version drifted from npm
-- ♻️ **`update`** — refreshes an existing card to the latest template (your config is never touched), auto-merges newly required deps, and prints a per-version changelog of what your card just learned
+## The wizard
 
-### The cards it mints
+- **GitHub import** — type your username and it prefills your name, bio,
+  blog, twitter, and email from your public profile. Respects your time,
+  not your air of mystery.
+- **Ten themes** — Cyberpunk, Synthwave '84, Matrix, Dracula, Catppuccin
+  Mocha, Gruvbox, Tokyo Night, Nord, Rosé Pine, Hacker Green, plus custom
+  hex for the uncompromising. Browse with `npx make-npx-card themes`, or
+  cycle them live on the preview before shipping.
+- **Live npm registry check** — so you don't fall in love with a package
+  name someone claimed in 2016 and abandoned the same afternoon.
+- **A real preview** — the actual card, rendered by the actual renderer,
+  with an edit loop. Nothing touches disk until you approve.
+- **Quick mode** — `--yes` scaffolds instantly with sane defaults;
+  `--from-github alice,bob,carol --yes` mints one card per teammate.
+- **`--dry-run`** — prints exactly what would be written, writes nothing.
+- **`doctor [dir]`** — health-checks any card: config, bin wiring, deps,
+  template version, and whether your local copy drifted from npm.
+- **`update [dir]`** — upgrades an existing card to the latest template
+  without touching your config, then tells you what your card just learned.
+- **git init** with a first commit, offered politely; automatic in quick mode.
 
-- 🌐 `--serve` — **your card is also a website**: a zero-dependency HTTP server with a terminal-styled HTML page, plus `/json`, `/vcard` (downloads straight into contacts apps), `/card.svg`, and `/qr` routes
-- 🔤 Your name in big **gradient ASCII art** (auto-shrinks or disappears on narrow terminals)
-- 🚀 Typewriter **boot animation** (`--no-anim` or `CI=1` to skip)
-- 🔗 **Clickable hyperlinks** via OSC 8, graceful fallback everywhere else
-- 🖥️ `--fetch` — **neofetch-style view**: gradient logo, `you@npx-card`, key/value info, palette row
-- 🎨 `--theme <name>` — **viewers can re-skin your card** in their favorite theme (composes with every other flag, `--serve` included)
-- 📊 `--stats` — **live GitHub stats**: ⭐ stars, a **language bar in real GitHub language colors**, 🚀 how many times your card got npx'd last week (npm downloads API), and a 14-day activity sparkline `▁▂▃▅▇` — cached for 10 min to respect rate limits
-- 📱 `--qr` — **scannable QR code** to your site, rendered in the terminal
-- 📇 `--qr contact` — QR encoding your whole vCard: **scan → you're in their phone contacts**
-- 🧭 `--open github|web|resume|guestbook|…` — jump straight to any of your links
-- ✍️ **Guestbook** — menu action that opens a prefilled GitHub issue on your card repo so visitors can say hi
-- 🗂️ `--vcard` — `npx you --vcard > you.vcf` gives people an importable contact
-- 🤖 `--json` — machine-readable for the pipe-and-jq crowd
-- ♿ `--plain` — no color, no box, no emoji: screen-reader and shell-pipeline friendly
-- 📋 **Copy my email** menu action via OSC 52 — works even over SSH
-- 🎉 `--party` — the whole card hue-rotates live in your terminal
-- 🐇 `--matrix` — follow the white rabbit
-- 🐮 `--moo` — you know exactly what this does
-- 👋 Greets visitors by time of day; ☕ mornings, 🦉 3am
-- 🧯 CI-safe: non-TTY runs print the card and exit instead of hanging on a prompt
+## The cards
 
-### The extras (opt-in per scaffold)
+Every generated card is a real npm package: one config file
+(`card.config.mjs`) holds your data, one runtime (`cli.mjs`) you never edit.
+The runtime knows the following tricks:
 
-- ⚙️ **GitHub Actions publish workflow** — tag-triggered, with npm provenance
-- 🎬 **VHS demo tape** — `vhs demo.tape` records your README gif
-- 🖼️ **Animated SVG social card** — a terminal window that *types* `$ npx you` with a blinking cursor, then fades your info in, live inside GitHub READMEs (same renderer powers `--serve`'s `/card.svg`)
-- 🪪 **Profile README snippet** — paste-ready embed for your `github.com/you/you` README
+| flag | behavior |
+| --- | --- |
+| *(none)* | gradient ASCII name, boot animation, themed box with clickable links (OSC 8), interactive menu |
+| `--serve [port]` | your card is now also a website: an HTTP server with a styled HTML page plus `/json`, `/vcard`, `/card.svg`, `/qr` |
+| `--stats` | live GitHub stats — stars, a language bar in GitHub's own colors, npx-runs last week, a 14-day activity sparkline |
+| `--qr` | scannable QR code to your site, rendered in the terminal |
+| `--qr contact` | a QR encoding your entire vCard; one scan and you're in their phone contacts |
+| `--vcard` | `npx you --vcard > you.vcf` — an importable contact file |
+| `--json` | machine-readable output for the pipe-and-jq demographic |
+| `--plain` | no color, no box, no drama; screen-reader and pipeline friendly |
+| `--open <link>` | jump straight to github, web, resume, email, or the guestbook |
+| `--theme <name>` | viewers can re-skin your card in their favorite theme; you may question their taste but not their rights |
+| `--fetch` | a neofetch-style profile view, since you were going to screenshot it anyway |
+| `--party` | the card hue-rotates through the full color wheel, then composes itself |
+| `--matrix` | follow the white rabbit |
+| `--moo` | there is a cow |
+
+Also on the menu: copy-my-email via OSC 52 (works over SSH, where clipboards
+fear to tread), a guestbook that opens a prefilled GitHub issue, and live
+stats. Cards greet visitors by time of day and pass no judgment on the
+3 a.m. crowd. In a non-TTY they print the card and exit instead of hanging
+on an invisible prompt — an act of basic decency more CLIs should attempt.
+
+## The extras (opt-in per scaffold)
+
+- **GitHub Actions publish workflow** — tag-triggered, with npm provenance
+- **VHS demo tape** — `vhs demo.tape` records your README gif
+- **Animated SVG social card** — a terminal window that types `$ npx you`
+  with a blinking cursor, live inside GitHub READMEs
+- **Profile README snippet** — paste-ready embed for `github.com/you/you`
 
 ## What you get
 
@@ -72,16 +92,12 @@ your-name/
 ├── cli.mjs                        # the card runtime — you never touch this
 ├── card.config.mjs                # ALL your data — edit anytime
 ├── package.json                   # bin + shebang + files: publish-ready
-├── card.svg                       # README/profile embed
+├── card.svg                       # animated README/profile embed
 ├── demo.tape                      # vhs demo.tape → demo.gif
 ├── profile-snippet.md             # paste into your GitHub profile README
 ├── .github/workflows/publish.yml  # npm version patch && git push --follow-tags
 ├── README.md · LICENSE · .gitignore
 ```
-
-Card already published from an earlier version? `npx make-npx-card update`
-inside its folder pulls in every new flag while keeping your config, then
-`npm run pub`. Check anything with `npx make-npx-card doctor`.
 
 Then:
 
@@ -90,26 +106,28 @@ cd your-name
 npm install
 node cli.mjs     # preview
 npm login        # once
-npm publish      # 🎉
+npm publish      # congratulations, you are now infrastructure
 ```
 
-And forever after, anyone anywhere can run `npx your-name`.
+From that point on, anyone with Node and a pulse can run `npx your-name`.
 
 ## Updating your card later
 
 Edit `card.config.mjs` (colors, links, `bigName`, `animate`, menu), then
-`npm run pub` — or push a version tag if you scaffolded the workflow.
+`npm run pub`. Card published from an older template? `npx make-npx-card
+update` inside its folder pulls in every new flag while leaving your config
+alone. When in doubt, `npx make-npx-card doctor`.
 
 ## Requirements
 
-Node 18+.
+Node 18 or newer. A terminal. Mild vanity.
 
 ## Cards made with this
 
-Open a PR and add yours!
+Open a PR and add yours.
 
 - `npx shwetank`
 
 ## License
 
-MIT
+MIT. The cards it generates are also MIT, in your name — we're not monsters.

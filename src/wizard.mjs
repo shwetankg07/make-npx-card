@@ -13,6 +13,15 @@ export function must(value) {
   return value;
 }
 
+/**
+ * p.text() resolves to undefined on empty submit — even with initialValue ""
+ * (verified empirically). Never call it raw; this wrapper always hands back
+ * a trimmed string.
+ */
+export async function askText(opts) {
+  return (must(await p.text(opts)) ?? "").trim();
+}
+
 const HANDLE_RE = /^[a-z0-9][a-z0-9-._]{0,49}$/;
 
 function validateHandle(v) {
@@ -26,32 +35,34 @@ function validateHandle(v) {
 }
 
 function validateOptionalEmail(v) {
-  if (!v.trim()) return undefined;
-  if (!/^\S+@\S+\.\S+$/.test(v.trim())) return "That doesn't look like an email";
+  const s = (v ?? "").trim();
+  if (!s) return undefined;
+  if (!/^\S+@\S+\.\S+$/.test(s)) return "That doesn't look like an email";
   return undefined;
 }
 
 function validateOptionalUrl(v) {
-  if (!v.trim()) return undefined;
-  if (!/\S+\.\S+/.test(v.trim())) return "That doesn't look like a URL";
+  const s = (v ?? "").trim();
+  if (!s) return undefined;
+  if (!/\S+\.\S+/.test(s)) return "That doesn't look like a URL";
   return undefined;
 }
 
 function stripAt(v) {
-  return v.trim().replace(/^@/, "");
+  return (v ?? "").trim().replace(/^@/, "");
 }
 
 async function askHandle(prev) {
   let initial = prev.handle ?? "";
   while (true) {
-    const handle = must(
-      await p.text({
+    const handle = (
+      await askText({
         message: "npm package name for your card (people will run `npx <name>`)",
         placeholder: "your-npm-username",
         initialValue: initial,
         validate: validateHandle,
       })
-    ).trim().toLowerCase();
+    ).toLowerCase();
 
     const s = p.spinner();
     s.start("Checking availability on the npm registry");
@@ -82,68 +93,54 @@ async function askHandle(prev) {
 }
 
 export async function runWizard(prev = {}) {
-  const fullName = must(
-    await p.text({
-      message: "Your full name",
-      placeholder: "Ada Lovelace",
-      initialValue: prev.fullName ?? "",
-      validate: (v) => (v.trim() ? undefined : "Required"),
-    })
-  ).trim();
+  const fullName = await askText({
+    message: "Your full name",
+    placeholder: "Ada Lovelace",
+    initialValue: prev.fullName ?? "",
+    validate: (v) => ((v ?? "").trim() ? undefined : "Required"),
+  });
 
-  const tagline = must(
-    await p.text({
-      message: "Job title / tagline (optional)",
-      placeholder: "breaks things, then fixes them",
-      initialValue: prev.tagline ?? "",
-    })
-  ).trim();
+  const tagline = await askText({
+    message: "Job title / tagline (optional)",
+    placeholder: "breaks things, then fixes them",
+    initialValue: prev.tagline ?? "",
+  });
 
   const handle = await askHandle(prev);
 
   const github = stripAt(
-    must(
-      await p.text({
-        message: "GitHub username (optional)",
-        initialValue: prev.github ?? "",
-      })
-    )
+    await askText({
+      message: "GitHub username (optional)",
+      initialValue: prev.github ?? "",
+    })
   );
 
   const twitter = stripAt(
-    must(
-      await p.text({
-        message: "Twitter/X handle (optional)",
-        initialValue: prev.twitter ?? "",
-      })
-    )
+    await askText({
+      message: "Twitter/X handle (optional)",
+      initialValue: prev.twitter ?? "",
+    })
   );
 
   const linkedin = stripAt(
-    must(
-      await p.text({
-        message: "LinkedIn handle — the bit after linkedin.com/in/ (optional)",
-        initialValue: prev.linkedin ?? "",
-      })
-    )
+    await askText({
+      message: "LinkedIn handle — the bit after linkedin.com/in/ (optional)",
+      initialValue: prev.linkedin ?? "",
+    })
   );
 
-  const website = must(
-    await p.text({
-      message: "Website / portfolio URL (optional)",
-      placeholder: "https://you.dev",
-      initialValue: prev.website ?? "",
-      validate: validateOptionalUrl,
-    })
-  ).trim();
+  const website = await askText({
+    message: "Website / portfolio URL (optional)",
+    placeholder: "https://you.dev",
+    initialValue: prev.website ?? "",
+    validate: validateOptionalUrl,
+  });
 
-  const email = must(
-    await p.text({
-      message: "Email (optional)",
-      initialValue: prev.email ?? "",
-      validate: validateOptionalEmail,
-    })
-  ).trim();
+  const email = await askText({
+    message: "Email (optional)",
+    initialValue: prev.email ?? "",
+    validate: validateOptionalEmail,
+  });
 
   const theme = must(
     await p.select({
@@ -163,15 +160,13 @@ export async function runWizard(prev = {}) {
   let accentHex;
   let accent2Hex;
   if (theme === "custom") {
-    accentHex = must(
-      await p.text({
-        message: "Accent hex color",
-        placeholder: "#ff6b35",
-        initialValue: prev.theme === "custom" ? prev.accentHex : "",
-        validate: (v) =>
-          /^#?[0-9a-fA-F]{6}$/.test(v.trim()) ? undefined : "Six hex digits, e.g. #ff6b35",
-      })
-    ).trim();
+    accentHex = await askText({
+      message: "Accent hex color",
+      placeholder: "#ff6b35",
+      initialValue: prev.theme === "custom" ? prev.accentHex : "",
+      validate: (v) =>
+        /^#?[0-9a-fA-F]{6}$/.test((v ?? "").trim()) ? undefined : "Six hex digits, e.g. #ff6b35",
+    });
     if (!accentHex.startsWith("#")) accentHex = "#" + accentHex;
     accent2Hex = lighten(accentHex);
   } else {
@@ -214,14 +209,12 @@ export async function runWizard(prev = {}) {
 
   let resumeUrl = prev.resumeUrl ?? "";
   if (menu.includes("resume")) {
-    resumeUrl = must(
-      await p.text({
-        message: "Resume URL",
-        placeholder: "https://you.dev/resume.pdf",
-        initialValue: resumeUrl,
-        validate: (v) => (/\S+\.\S+/.test(v.trim()) ? undefined : "Required for the resume action"),
-      })
-    ).trim();
+    resumeUrl = await askText({
+      message: "Resume URL",
+      placeholder: "https://you.dev/resume.pdf",
+      initialValue: resumeUrl,
+      validate: (v) => (/\S+\.\S+/.test((v ?? "").trim()) ? undefined : "Required for the resume action"),
+    });
   }
 
   const extras = must(

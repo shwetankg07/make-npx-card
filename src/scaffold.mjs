@@ -118,23 +118,23 @@ ${svgBlock}
 | --- | --- |
 | \`npx ${a.handle} --fetch\` | neofetch-style profile view |
 | \`npx ${a.handle} --qr\` | scannable QR code, straight in the terminal |
-| \`npx ${a.handle} --qr contact\` | QR that adds me to your phone contacts |
-| \`npx ${a.handle} --serve\` | the whole card as a local website (+ /json /vcard /card.svg /qr) |
+| \`npx ${a.handle} --qr contact\` | a QR encoding the whole vCard; one scan and I'm in your phone contacts |
+| \`npx ${a.handle} --serve\` | the card as a local website (plus /json, /vcard, /card.svg, /qr) |
 | \`npx ${a.handle} --stats\` | live GitHub stats: stars, language bar, npx-runs, activity |
-| \`npx ${a.handle} --plain\` | no color, no box — script & screen-reader friendly |
-| \`npx ${a.handle} --open github\` | jump straight to a link (github/web/resume/…) |
+| \`npx ${a.handle} --plain\` | no color, no box, no drama — script and screen-reader friendly |
+| \`npx ${a.handle} --open github\` | jump straight to a link (github, web, resume, …) |
 | \`npx ${a.handle} --theme gruvbox\` | re-skin the card in *your* favorite theme |
-| \`npx ${a.handle} --vcard > me.vcf\` | downloadable contact card |
+| \`npx ${a.handle} --vcard > me.vcf\` | downloadable contact file |
 | \`npx ${a.handle} --json\` | machine-readable, pipe it wherever |
-| \`npx ${a.handle} --party\` | 🎉 |
-| \`npx ${a.handle} --matrix\` | 🐇 |
-| \`npx ${a.handle} --moo\` | 🐮 |
+| \`npx ${a.handle} --party\` | the card hue-rotates through the full color wheel, then composes itself |
+| \`npx ${a.handle} --matrix\` | follow the white rabbit |
+| \`npx ${a.handle} --moo\` | there is a cow |
 
 ## Customize
 
-All your data lives in [\`card.config.mjs\`](./card.config.mjs) — name, links,
+All the data lives in [\`card.config.mjs\`](./card.config.mjs) — name, links,
 theme colors, card style, menu actions, \`bigName\`/\`animate\` toggles. Edit it,
-run \`npm start\` to preview, done. You never need to touch \`cli.mjs\`.
+run \`npm start\` to preview, done. \`cli.mjs\` never needs touching.
 
 ## Publish / update
 
@@ -146,7 +146,7 @@ npm run pub        # every update after (bumps the patch version + publishes)
 ${workflowBlock}${vhsBlock}
 ---
 
-⚡ minted with [make-npx-card](https://www.npmjs.com/package/make-npx-card) — run \`npx make-npx-card\` to make yours
+Minted with [make-npx-card](https://www.npmjs.com/package/make-npx-card) — run \`npx make-npx-card\` to make yours.
 `;
 }
 

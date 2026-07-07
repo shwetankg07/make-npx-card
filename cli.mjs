@@ -6,7 +6,7 @@ import path from "node:path";
 import * as p from "@clack/prompts";
 import chalk from "chalk";
 import { banner } from "./src/banner.mjs";
-import { runWizard, must, bail } from "./src/wizard.mjs";
+import { runWizard, must, bail, askText } from "./src/wizard.mjs";
 import { scaffoldCard, planCard, toConfig } from "./src/scaffold.mjs";
 import { renderCard } from "./src/templates/card-cli.mjs";
 import { fetchGithubUser, mapGithubUser } from "./src/github.mjs";
@@ -162,13 +162,11 @@ async function pickTargetDir(handle) {
     );
     if (verdict === "cancel") bail();
     if (verdict === "overwrite") return dir;
-    const name = must(
-      await p.text({
-        message: "Folder name",
-        initialValue: path.basename(dir) + "-card",
-        validate: (v) => (v.trim() ? undefined : "Required"),
-      })
-    ).trim();
+    const name = await askText({
+      message: "Folder name",
+      initialValue: path.basename(dir) + "-card",
+      validate: (v) => ((v ?? "").trim() ? undefined : "Required"),
+    });
     dir = path.resolve(process.cwd(), name);
   }
   return dir;
@@ -304,12 +302,10 @@ async function main() {
   // Prefill from GitHub: via flag, or offered interactively.
   let ghUser = args.fromGithub;
   if (!ghUser) {
-    const v = must(
-      await p.text({
-        message: "GitHub username to import your profile from (enter to skip)",
-        placeholder: "your-github-username",
-      })
-    ).trim();
+    const v = await askText({
+      message: "GitHub username to import your profile from (enter to skip)",
+      placeholder: "your-github-username",
+    });
     ghUser = v || null;
   }
   if (ghUser) {
